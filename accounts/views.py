@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
-
+from django.contrib.auth.decorators import login_required
+from accounts.forms import UserProfileForm
 from base.models import Post
 from .models import UserProfile
 from django.utils.datastructures import MultiValueDictKeyError
@@ -82,4 +83,21 @@ def user_profile(request, username, id):
     return render(request, 'profile.html', {
         'profile': profile,
         'posts': posts,
+    })
+
+@login_required(login_url='login')
+def update_profile(request, username, id):
+    user = User.objects.get(username=username, id=id)
+    profile = UserProfile.objects.get(person=user)
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=profile)
+
+        if form.is_valid():
+            form.save()
+            return redirect('profile', username=user.username, id=user.id)
+    else:
+        form = UserProfileForm(instance=profile)
+    return render(request, 'update_profile.html',{
+        'form': form,
+        'profile': profile,
     })

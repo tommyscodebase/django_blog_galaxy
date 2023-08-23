@@ -43,11 +43,19 @@
                   >
                     <span class="absolute -inset-1.5"></span>
                     <span class="sr-only">Open user menu</span>
+                    {% if profile.avatar %}
                     <img
                       class="h-8 w-8 rounded-full"
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      alt=""
+                      src="{{ profile.avatar.url }}"
+                      alt="User Profile Picture"
                     />
+                    {% else %}
+                    <img
+                      class="h-8 w-8 rounded-full"
+                      src="{% static 'user.jpg' %}"
+                      alt="User Profile Picture"
+                    />
+                    {% endif %}
                   </button>
                 </div>
 
@@ -163,14 +171,21 @@
           >
             Member Information
           </h3>
+          {% if profile.avatar %}
           <img
             class="w-14 h-14 lg:h-20 lg:w-20 rounded-full"
-            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-            alt=""
+            src="{{ profile.avatar.url }}"
+            alt="User Profile Picture"
           />
-          {% if profile.person == user %}
+          {% else %}
+          <img
+            class="w-14 h-14 lg:h-20 lg:w-20 rounded-full"
+            src="{% static 'user.jpg' %}"
+            alt="Default Profile Picture"
+          />
+          {% endif %} {% if profile.person == user %}
           <a
-            href="update_profile.html"
+            href="{% url 'update_profile' profile.person.username profile.person.id %}"
             class="px-4 flex gap-2 py-1 border font-semibold mt-5 w-auto ease-in-out duration-500 border-emerald-100 rounded-md text-emerald-600 hover:bg-emerald-600 hover:text-emerald-50"
             >Edit Profile
             <svg
@@ -335,7 +350,7 @@
 
             <div class="text-gray-400 flex justify-between">
               <a
-                href="post.html"
+                href="{{ post.get_absolute_url }}"
                 class="w-fit mt-2 text-white bg-emerald-600 px-3 py-1 rounded-sm"
                 >Continue Reading...</a
               >
@@ -343,7 +358,7 @@
               <div class="text-gray-400 flex gap-2">
                 <!-- Edit Post -->
                 <a
-                  href="create_post.html"
+                  href="{% url 'update_post' post.id %}"
                   class="text-emerald-600 rounded-xl hover:bg-emerald-100 p-2"
                   ><svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -362,7 +377,7 @@
                 </a>
                 <!-- Delete Post -->
                 <a
-                  href="delete.html"
+                  href="{% url 'delete_post' post.id %}"
                   class="text-red-600 p-2 rounded-xl hover:bg-red-100"
                 >
                   <svg

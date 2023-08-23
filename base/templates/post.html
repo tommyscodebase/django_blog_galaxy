@@ -1,9 +1,10 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="{% static 'style.css' %}" />
     <title>Galaxy | All About The Artemis Lunar Mission</title>
   </head>
   <body class="p-4 bg-gray-200">
@@ -13,35 +14,40 @@
         <div class="flex h-16 items-center justify-between">
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <a class="text-2xl font-bold text-white" href="index.html"
+              <a class="text-2xl font-bold text-white" href="{% url 'home' %}"
                 >Galaxy</a
               >
             </div>
             <div class="hidden md:block">
               <div class="ml-10 flex items-baseline space-x-4">
-                <a
-                  href="login.html"
-                  class="text-gray-100 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-lg font-medium"
-                  aria-current="page"
-                  >Login</a
-                >
-                <a
-                  href="signup.html"
-                  class="text-gray-100 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-lg font-medium"
-                  >Signup</a
-                >
+                {% if user.is_authenticated %}
                 <a
                   href="create_post.html"
                   class="text-gray-100 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-lg font-medium"
                   aria-current="page"
                   >Create Post</a
                 >
+                {% else %}
+
+                <a
+                  href="{% url 'login' %}"
+                  class="text-gray-100 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-lg font-medium"
+                  aria-current="page"
+                  >Login</a
+                >
+                <a
+                  href="{% url 'register' %}"
+                  class="text-gray-100 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-lg font-medium"
+                  >Signup</a
+                >
+                {% endif %}
               </div>
             </div>
           </div>
           <div class="hidden md:block">
             <div class="ml-4 flex items-center md:ml-6">
               <!-- Profile dropdown -->
+              {% if user.is_authenticated %}
               <div class="relative ml-3">
                 <div>
                   <button
@@ -53,11 +59,19 @@
                   >
                     <span class="absolute -inset-1.5"></span>
                     <span class="sr-only">Open user menu</span>
+                    {% if profile.avatar %}
                     <img
                       class="h-8 w-8 rounded-full"
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      alt=""
+                      src="{{ profile.avatar.url }}"
+                      alt="User Profile Picture"
                     />
+                    {% else %}
+                    <img
+                      class="h-8 w-8 rounded-full"
+                      src="{% static 'user.jpg' %}"
+                      alt="User Profile Picture"
+                    />
+                    {% endif %}
                   </button>
                 </div>
 
@@ -71,7 +85,7 @@
                 >
                   <!--Profile Dropdown Menu-->
                   <a
-                    href="profile.html"
+                    href="{% url 'profile' user.username user.id %}"
                     class="block px-4 py-2 text-sm text-gray-700"
                     role="menuitem"
                     tabindex="-1"
@@ -80,7 +94,7 @@
                   >
 
                   <a
-                    href="#"
+                    href="{% url 'logout' %}"
                     class="block px-4 py-2 text-sm text-gray-700"
                     role="menuitem"
                     tabindex="-1"
@@ -89,6 +103,7 @@
                   >
                 </div>
               </div>
+              {% endif %}
             </div>
           </div>
           <div class="-mr-2 flex md:hidden">
@@ -125,56 +140,69 @@
       <!-- Mobile menu, show/hide based on menu state. -->
       <div class="hidden md:hidden" id="mobile-menu">
         <div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
-          <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-          <a
-            href="login.html"
-            class="text-gray-100 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
-            aria-current="page"
-            >Login</a
-          >
-          <a
-            href="signup.html"
-            class="text-gray-100 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
-            >Signup</a
-          >
+          {% if user.is_authenticated %}
           <a
             href="create_post.html"
             class="text-gray-100 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
             >Create Post</a
           >
+          {% else %}
+
+          <a
+            href="{% url 'login' %}"
+            class="text-gray-100 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+            aria-current="page"
+            >Login</a
+          >
+          <a
+            href="{% url 'register' %}"
+            class="text-gray-100 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+            >Signup</a
+          >
+          {% endif %}
         </div>
+        {% if user.is_authenticated %}
         <div class="border-t border-gray-700 pb-3 pt-4">
           <div class="flex items-center px-5">
             <div class="flex-shrink-0">
+              {% if profile.avatar %}
               <img
-                class="h-10 w-10 rounded-full"
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                alt=""
+                class="h-8 w-8 rounded-full"
+                src="{{ profile.avatar.url }}"
+                alt="User Profile Picture"
               />
+              {% else %}
+              <img
+                class="h-8 w-8 rounded-full"
+                src="{% static 'user.jpg' %}"
+                alt="User Profile Picture"
+              />
+              {% endif %}
             </div>
             <div class="ml-3">
               <div class="text-base font-medium leading-none text-white">
-                Tom Cook
+                {{ user.first_name }} {{ user.last_name }}
               </div>
               <div class="text-sm font-medium leading-none text-gray-200">
-                tom@example.com
+                {{ user.email }}
               </div>
             </div>
           </div>
           <div class="mt-3 space-y-1 px-2">
             <a
-              href="profile.html"
+              href="{% url 'profile' user.username user.id %}"
               class="block rounded-md px-3 py-2 text-base font-medium text-gray-100 hover:bg-gray-700 hover:text-white"
               >Your Profile</a
             >
 
             <a
-              href="#"
+              href="{% url 'logout' %}"
               class="block rounded-md px-3 py-2 text-base font-medium text-gray-100 hover:bg-gray-700 hover:text-white"
               >Sign out</a
             >
           </div>
         </div>
+        {% endif %}
       </div>
     </nav>
     <!-- End of Navbar -->
@@ -186,7 +214,7 @@
       >
         <div class="w-full flex flex-col p-2">
           <h2 class="text-2xl font-bold pb-6 text-emerald-600">
-            All About The Artemis Lunar Mission
+            {{ post.title }}
           </h2>
           <!-- Author, date, comments -->
           <div
@@ -207,7 +235,9 @@
                   clip-rule="evenodd"
                 />
               </svg>
-              <p>John Doe</p>
+              <a href="{% url 'profile' post.author.username post.author.id %}"
+                >{{ post.author }}</a
+              >
             </div>
             <!-- Time -->
             <div class="flex">
@@ -227,7 +257,7 @@
                 />
               </svg>
 
-              <p>August 8, 2023</p>
+              <p>{{ post.created }}</p>
             </div>
             <!-- Comments -->
             <div class="flex">
@@ -252,42 +282,7 @@
           <hr class="border w-full my-2 border-gray-200" />
           <div class="w-full">
             <p class="text-left mt-5 text-gray-700">
-              Lorem ipsum dolor sit amet consectetur adipiscing elit, eros arcu
-              elementum sem nostra magnis aptent habitasse, eget taciti posuere
-              nunc cum tempus. Auctor luctus elementum malesuada phasellus ac
-              vestibulum felis morbi class fermentum, eros cursus libero
-              inceptos consequat cubilia facilisi eget. Hac sem class sed magna
-              vivamus dictumst et odio, nunc convallis scelerisque lorem mus
-              gravida elementum, habitant turpis consequat consectetur luctus
-              tortor augue. Est turpis consectetur volutpat nascetur adipiscing
-              penatibus laoreet cursus posuere, odio aenean donec primis id elit
-              imperdiet. Nunc non primis metus sem pulvinar magna consequat,
-              ultricies lorem rutrum tortor ac lacinia condimentum senectus,
-              porttitor suspendisse aenean fames vivamus est. Eros libero
-              penatibus venenatis placerat praesent aliquet ultricies leo odio,
-              nulla consequat donec dictumst dolor fusce senectus magna aenean,
-              fames porttitor vivamus conubia ultrices facilisi iaculis
-              ridiculus. <br /><br />
-
-              Suscipit justo phasellus inceptos nascetur metus sociosqu conubia
-              erat, tempor sem ullamcorper condimentum malesuada fermentum
-              nullam donec auctor, congue elit nisl feugiat dolor netus morbi.
-              Velit elementum id sed nam eget cubilia consectetur facilisi, dis
-              nec facilisis purus dignissim conubia bibendum, rutrum vulputate
-              auctor sociis venenatis odio sit. Purus cubilia morbi eget sit
-              curabitur ullamcorper varius, consequat mi quis potenti mattis
-              turpis curae commodo, malesuada euismod est scelerisque posuere
-              ac. Senectus etiam interdum placerat elementum inceptos feugiat,
-              volutpat conubia torquent nisl eros. Commodo orci varius amet
-              cubilia pulvinar purus suspendisse id ornare a diam, mi iaculis
-              vestibulum libero litora parturient turpis cursus platea
-              sollicitudin placerat blandit, venenatis nisl ad tempor lobortis
-              nascetur vulputate primis sem volutpat. Non hac orci vestibulum
-              platea rutrum condimentum, malesuada sem ante commodo proin
-              blandit, curae sociosqu himenaeos suspendisse nostra. Sed dis eget
-              taciti felis curae ligula odio litora est tempor amet quis,
-              parturient faucibus viverra sem per urna eleifend maecenas justo
-              facilisis scelerisque. <br /><br />
+              {{ post.body|linebreaks }}
             </p>
           </div>
         </div>
@@ -492,36 +487,17 @@
         <div
           class="w-full h-[25vh] overflow-y-scroll scrollbar-hide rounded-sm shadow-md bg-white flex flex-col p-1"
         >
+          {% for s_post in similar_posts %}
+          <!--  -->
+          {% if s_post != post %}
           <a
-            href=""
+            href="{{ s_post.get_absolute_url }}"
             class="w-full font-semibold text-base text-emerald-600 px-3 py-1 rounded-sm hover:underline"
-            >All About The Artemis Lunar Mission</a
+            >{{ s_post.title|truncatewords:10 }}</a
           >
-          <a
-            href=""
-            class="w-full font-semibold text-base text-emerald-600 px-3 py-1 rounded-sm hover:underline"
-            >All About The Artemis Lunar Mission</a
-          >
-          <a
-            href=""
-            class="w-full font-semibold text-base text-emerald-600 px-3 py-1 rounded-sm hover:underline"
-            >All About The Artemis Lunar Mission</a
-          >
-          <a
-            href=""
-            class="w-full font-semibold text-base text-emerald-600 px-3 py-1 rounded-sm hover:underline"
-            >All About The Artemis Lunar Mission</a
-          >
-          <a
-            href=""
-            class="w-full font-semibold text-base text-emerald-600 px-3 py-1 rounded-sm hover:underline"
-            >All About The Artemis Lunar Mission</a
-          >
-          <a
-            href=""
-            class="w-full font-semibold text-base text-emerald-600 px-3 py-1 rounded-sm hover:underline"
-            >All About The Artemis Lunar Mission</a
-          >
+          {% endif %}
+          <!--  -->
+          {% endfor %}
         </div>
 
         <!-- Comment Form -->
@@ -574,6 +550,6 @@
       </section>
     </main>
     <!-- JS Scripts -->
-    <script type="module" src="script.js"></script>
+    <script type="module" src="{% static 'script.js' %}"></script>
   </body>
 </html>
