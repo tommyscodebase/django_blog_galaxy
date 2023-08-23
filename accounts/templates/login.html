@@ -1,9 +1,10 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="{% static 'style.css' %}" />
     <title>Galaxy | Login</title>
   </head>
   <body class="p-4 bg-gray-200">
@@ -16,7 +17,7 @@
           Login to
           <a
             class="text-emerald-600 underline underline-offset-4"
-            href="index.html"
+            href="{% url 'home' %}"
             >Galaxy</a
           >
         </h2>
@@ -27,7 +28,7 @@
       >
         <form class="space-y-6 p-4" action="#" method="POST">
           <!-- Errors -->
-
+          {% csrf_token %} {% if error %}
           <div class="bg-red-100 p-5 w-full" id="alert-container">
             <div class="flex space-x-3">
               <div
@@ -54,21 +55,21 @@
               </div>
             </div>
           </div>
-
+          {% endif %}
           <!-- End of Errors -->
 
           <div>
             <label
               for="email"
               class="block text-sm font-medium leading-6 text-gray-900"
-              >Email address</label
+              >Username</label
             >
             <div class="mt-2">
               <input
-                id="email"
-                name="email"
-                type="email"
-                autocomplete="email"
+                id="username"
+                name="username"
+                type="text"
+                autocomplete="username"
                 required
                 class="block w-full rounded-md border-0 py-1.5 px-3 shadow-sm ring-1 ring-inset ring-emerald-300 placeholder:text-gray-400 focus:ring-1 focus:ring-emerald-600 focus:outline-emerald-400 sm:text-sm sm:leading-6"
               />
@@ -108,7 +109,7 @@
         <p class="mt-10 text-center text-sm text-gray-500">
           Not a member?
           <a
-            href="signup.html"
+            href="{% url 'register' %}"
             class="font-semibold leading-6 text-emerald-600 hover:text-emerald-500"
             >Signup on Galaxy</a
           >
@@ -117,6 +118,7 @@
     </div>
     <!-- End of Login Form -->
 
-    <script type="module" src="script.js"></script>
+    <!-- JS Scripts -->
+    <script type="module" src="{% static 'script.js' %}"></script>
   </body>
 </html>

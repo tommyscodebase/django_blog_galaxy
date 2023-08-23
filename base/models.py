@@ -13,6 +13,11 @@ class Post(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
+    @property
+    def image_url(self):
+        if self.image and hasattr(self.image, 'url'):
+            return self.image.url
+
     class Meta:
         ordering = ['-created']
         indexes = [models.Index(fields=['-created'])]

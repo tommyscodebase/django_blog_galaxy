@@ -18,29 +18,34 @@
             </div>
             <div class="hidden md:block">
               <div class="ml-10 flex items-baseline space-x-4">
-                <a
-                  href="login.html"
-                  class="text-gray-100 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-lg font-medium"
-                  aria-current="page"
-                  >Login</a
-                >
-                <a
-                  href="signup.html"
-                  class="text-gray-100 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-lg font-medium"
-                  >Signup</a
-                >
+                {% if user.is_authenticated %}
                 <a
                   href="create_post.html"
                   class="text-gray-100 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-lg font-medium"
                   aria-current="page"
                   >Create Post</a
                 >
+                {% else %}
+
+                <a
+                  href="{% url 'login' %}"
+                  class="text-gray-100 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-lg font-medium"
+                  aria-current="page"
+                  >Login</a
+                >
+                <a
+                  href="{% url 'register' %}"
+                  class="text-gray-100 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-lg font-medium"
+                  >Signup</a
+                >
+                {% endif %}
               </div>
             </div>
           </div>
           <div class="hidden md:block">
             <div class="ml-4 flex items-center md:ml-6">
               <!-- Profile dropdown -->
+              {% if user.is_authenticated %}
               <div class="relative ml-3">
                 <div>
                   <button
@@ -70,7 +75,7 @@
                 >
                   <!--Profile Dropdown Menu-->
                   <a
-                    href="profile.html"
+                    href="{% url 'profile' user.username user.id %}"
                     class="block px-4 py-2 text-sm text-gray-700"
                     role="menuitem"
                     tabindex="-1"
@@ -79,7 +84,7 @@
                   >
 
                   <a
-                    href="#"
+                    href="{% url 'logout' %}"
                     class="block px-4 py-2 text-sm text-gray-700"
                     role="menuitem"
                     tabindex="-1"
@@ -88,6 +93,7 @@
                   >
                 </div>
               </div>
+              {% endif %}
             </div>
           </div>
           <div class="-mr-2 flex md:hidden">
@@ -124,24 +130,28 @@
       <!-- Mobile menu, show/hide based on menu state. -->
       <div class="hidden md:hidden" id="mobile-menu">
         <div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
-          <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-          <a
-            href="login.html"
-            class="text-gray-100 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
-            aria-current="page"
-            >Login</a
-          >
-          <a
-            href="signup.html"
-            class="text-gray-100 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
-            >Signup</a
-          >
+          {% if user.is_authenticated %}
           <a
             href="create_post.html"
             class="text-gray-100 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
             >Create Post</a
           >
+          {% else %}
+
+          <a
+            href="{% url 'login' %}"
+            class="text-gray-100 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+            aria-current="page"
+            >Login</a
+          >
+          <a
+            href="{% url 'register' %}"
+            class="text-gray-100 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+            >Signup</a
+          >
+          {% endif %}
         </div>
+        {% if user.is_authenticated %}
         <div class="border-t border-gray-700 pb-3 pt-4">
           <div class="flex items-center px-5">
             <div class="flex-shrink-0">
@@ -162,18 +172,19 @@
           </div>
           <div class="mt-3 space-y-1 px-2">
             <a
-              href="profile.html"
+              href="{% url 'profile' user.username user.id %}"
               class="block rounded-md px-3 py-2 text-base font-medium text-gray-100 hover:bg-gray-700 hover:text-white"
               >Your Profile</a
             >
 
             <a
-              href="#"
+              href="{% url 'logout' %}"
               class="block rounded-md px-3 py-2 text-base font-medium text-gray-100 hover:bg-gray-700 hover:text-white"
               >Sign out</a
             >
           </div>
         </div>
+        {% endif %}
       </div>
     </nav>
     <!-- End of Navbar -->
@@ -189,7 +200,9 @@
         <div
           class="w-full h-fit lg:w-[48%] rounded-sm shadow-md bg-white flex flex-col p-2"
         >
-          <h2 class="font-semibold text-lg">{{ post.title }}</h2>
+          <h2 class="font-semibold text-lg">
+            {{ post.title|truncatewords:10 }}
+          </h2>
           <!-- Author, date, comments -->
           <div class="w-full py-2 text-sm text-gray-600 flex justify-between">
             <!-- Author -->
@@ -206,7 +219,9 @@
                   clip-rule="evenodd"
                 />
               </svg>
-              <p>{{ post.author }}</p>
+              <a href="{% url 'profile' post.author.username post.author.id %}"
+                >{{ post.author }}</a
+              >
             </div>
             <!-- Time -->
             <div class="flex">
@@ -226,7 +241,7 @@
                 />
               </svg>
 
-              <p>{{ post.created }}</p>
+              <p>{{ post.created|date:"M. d, Y" }}</p>
             </div>
             <!-- Comments -->
             <div class="flex">
@@ -251,7 +266,7 @@
           <div class="w-full flex gap-2 justify-between">
             <img
               class="w-20 h-20"
-              src="./blog_images/about-bg.jpg"
+              src="{{post.image_url|default_if_none:'media/blog_images/default_blog_image.jpg'}}"
               alt=""
               srcset=""
             />
