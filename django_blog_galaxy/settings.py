@@ -128,6 +128,14 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'django_blog_galaxy/static'),
 )
 
+
+# Email Configuration
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'your email address'
+EMAIL_HOST_PASSWORD = 'your password'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 

@@ -67,8 +67,12 @@
                   </h3>
                   <div class="mt-2">
                     <p class="text-sm text-gray-500">
-                      Are you sure you want to delete "{{post.title}}"? It will
-                      be permanently removed. This action cannot be undone.
+                      Are you sure you want to delete
+                      <span class="font-bold text-red-600">
+                        {{ item.body }}</span
+                      >
+                      ? It will be permanently removed. This action cannot be
+                      undone.
                     </p>
                   </div>
                   {% endif %}
@@ -90,12 +94,11 @@
                 />
                 {% else %}
                 <input
-                  href=""
+                  href="{% url 'delete_comment' item.id %}"
                   type="submit"
                   value="Yes, Delete"
                   class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
                 />
-                Yes, Delete
                 <!--  -->
                 {% endif %}
                 <a

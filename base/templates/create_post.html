@@ -1,9 +1,10 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="{% static 'style.css' %}" />
     <title>Galaxy</title>
   </head>
   <body class="bg-gray-200 p-4">
@@ -13,14 +14,33 @@
         <div class="flex h-16 items-center justify-between">
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <a class="text-2xl font-bold text-white" href="index.html"
+              <a class="text-2xl font-bold text-white" href="{% url 'home' %}"
                 >Galaxy</a
               >
+            </div>
+            <div class="hidden md:block">
+              <div class="ml-10 flex items-baseline space-x-4">
+                {% if not user.is_authenticated %}
+
+                <a
+                  href="{% url 'login' %}"
+                  class="text-gray-100 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-lg font-medium"
+                  aria-current="page"
+                  >Login</a
+                >
+                <a
+                  href="{% url 'register' %}"
+                  class="text-gray-100 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-lg font-medium"
+                  >Signup</a
+                >
+                {% endif %}
+              </div>
             </div>
           </div>
           <div class="hidden md:block">
             <div class="ml-4 flex items-center md:ml-6">
               <!-- Profile dropdown -->
+              {% if user.is_authenticated %}
               <div class="relative ml-3">
                 <div>
                   <button
@@ -32,11 +52,19 @@
                   >
                     <span class="absolute -inset-1.5"></span>
                     <span class="sr-only">Open user menu</span>
+                    {% if profile.avatar %}
                     <img
                       class="h-8 w-8 rounded-full"
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      alt=""
+                      src="{{ profile.avatar.url }}"
+                      alt="User Profile Picture"
                     />
+                    {% else %}
+                    <img
+                      class="h-8 w-8 rounded-full"
+                      src="{% static 'user.jpg' %}"
+                      alt="User Profile Picture"
+                    />
+                    {% endif %}
                   </button>
                 </div>
 
@@ -50,7 +78,7 @@
                 >
                   <!--Profile Dropdown Menu-->
                   <a
-                    href="profile.html"
+                    href="{% url 'profile' user.username user.id %}"
                     class="block px-4 py-2 text-sm text-gray-700"
                     role="menuitem"
                     tabindex="-1"
@@ -59,7 +87,7 @@
                   >
 
                   <a
-                    href="#"
+                    href="{% url 'logout' %}"
                     class="block px-4 py-2 text-sm text-gray-700"
                     role="menuitem"
                     tabindex="-1"
@@ -68,6 +96,7 @@
                   >
                 </div>
               </div>
+              {% endif %}
             </div>
           </div>
           <div class="-mr-2 flex md:hidden">
@@ -103,38 +132,64 @@
 
       <!-- Mobile menu, show/hide based on menu state. -->
       <div class="hidden md:hidden" id="mobile-menu">
+        <div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
+          {% if not user.is_authenticated %}
+
+          <a
+            href="{% url 'login' %}"
+            class="text-gray-100 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+            aria-current="page"
+            >Login</a
+          >
+          <a
+            href="{% url 'register' %}"
+            class="text-gray-100 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+            >Signup</a
+          >
+          {% endif %}
+        </div>
+        {% if user.is_authenticated %}
         <div class="border-t border-gray-700 pb-3 pt-4">
           <div class="flex items-center px-5">
             <div class="flex-shrink-0">
+              {% if profile.avatar %}
               <img
-                class="h-10 w-10 rounded-full"
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                alt=""
+                class="h-8 w-8 rounded-full"
+                src="{{ profile.avatar.url }}"
+                alt="User Profile Picture"
               />
+              {% else %}
+              <img
+                class="h-8 w-8 rounded-full"
+                src="{% static 'user.jpg' %}"
+                alt="User Profile Picture"
+              />
+              {% endif %}
             </div>
             <div class="ml-3">
               <div class="text-base font-medium leading-none text-white">
-                Tom Cook
+                {{ user.first_name }} {{ user.last_name }}
               </div>
               <div class="text-sm font-medium leading-none text-gray-200">
-                tom@example.com
+                {{ user.email }}
               </div>
             </div>
           </div>
           <div class="mt-3 space-y-1 px-2">
             <a
-              href="profile.html"
+              href="{% url 'profile' user.username user.id %}"
               class="block rounded-md px-3 py-2 text-base font-medium text-gray-100 hover:bg-gray-700 hover:text-white"
               >Your Profile</a
             >
 
             <a
-              href="#"
+              href="{% url 'logout' %}"
               class="block rounded-md px-3 py-2 text-base font-medium text-gray-100 hover:bg-gray-700 hover:text-white"
               >Sign out</a
             >
           </div>
         </div>
+        {% endif %}
       </div>
     </nav>
     <!-- End of Navbar -->
@@ -145,6 +200,7 @@
       enctype="multipart/form-data"
       class="bg-white mt-4 p-4 rounded-lg shadow-md w-full md:w-3/5 mx-auto"
     >
+      {% csrf_token %}
       <h2 class="text-2xl font-semibold mb-4 text-emerald-600">
         Create a New Blog Post
       </h2>
@@ -170,31 +226,9 @@
           id="category"
         >
           <option value="" selected disabled>Select a category</option>
-          <option value="Technology and Science">Technology and Science</option>
-          <option value="Environment and Sustainability">
-            Environment and Sustainability
-          </option>
-          <option value="Travel and Adventure">Travel and Adventure</option>
-          <option value="Health and Wellness">Health and Wellness</option>
-          <option value="Lifestyle and Self-Improvement">
-            Lifestyle and Self-Improvement
-          </option>
-          <option value="Entertainment and Pop Culture">
-            Entertainment and Pop Culture
-          </option>
-          <option value="Business and Finance">Business and Finance</option>
-          <option value="Education and Learning">Education and Learning</option>
-          <option value="Food and Cooking">Food and Cooking</option>
-          <option value="Parenting and Family">Parenting and Family</option>
-          <option value="Fashion and Beauty">Fashion and Beauty</option>
-          <option value="Inspiration and Motivation">
-            Inspiration and Motivation
-          </option>
-          <option value="DIY and Crafts">DIY and Crafts</option>
-          <option value="Technology Reviews">Technology Reviews</option>
-          <option value="News and Current Events">
-            News and Current Events
-          </option>
+          {% for category in categories %}
+          <option value="{{ category.title }}">{{ category.title }}</option>
+          {% endfor %}
         </select>
       </div>
       <div class="mb-4">
@@ -216,13 +250,21 @@
         >
         <textarea
           id="text"
-          name="text"
+          name="body"
           rows="4"
           required
           class="mt-1 p-2 border w-full rounded-md focus:outline-none focus:ring-emerald-400 focus:border-emerald-300"
         ></textarea>
       </div>
       <div class="text-right">
+        <a
+          href="{{ request.META.HTTP_REFERER }}"
+          type="button"
+          id="cancelUpdate"
+          class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+        >
+          Go back
+        </a>
         <button
           type="submit"
           class="px-4 py-2 bg-emerald-500 text-white rounded-md hover:bg-emerald-600 focus:outline-none focus:ring focus:ring-emerald-400"
@@ -233,6 +275,6 @@
     </form>
 
     <!-- JS Scripts -->
-    <script src="script.js"></script>
+    <script type="module" src="{% static 'script.js' %}"></script>
   </body>
 </html>
